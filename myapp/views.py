@@ -8,6 +8,8 @@ class TaskListView(ListView):
   model = TaskModel
   template_name = 'index.html'
   context_object_name = 'tasks'
+  paginate_by = 5
+  ordering = ['-id']
 
 
 # Create View(add)
