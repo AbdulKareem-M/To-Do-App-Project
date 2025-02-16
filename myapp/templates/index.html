@@ -8,107 +8,110 @@
 <body>
     {% extends "base.html" %}
 
-    {% block title %}Task List{% endblock %}
-    
-    {% block content %}
-    <div class="card shadow-sm p-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="fw-bold">📋 Task List</h2>
-            <a href="{% url 'create' %}" class="btn btn-primary">
-                ➕ Add Task
-            </a>
-        </div>
-    
-        <table class="table table-hover table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>Title</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in tasks %}
-                <tr>
-                    <td class="{% if task.completed %}text-muted text-decoration-line-through{% endif %}">
-                        {{ task.title }}
-                    </td>
-                    <td class="text-center">
-                        <form action="{% url 'toggle' task.id %}" method="POST" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm 
-                                {% if task.completed %}btn-success{% else %}btn-secondary{% endif %}">
-                                {% if task.completed %}✔ Done{% else %}⏳ Pending{% endif %}
-                            </button>
-                        </form>
-                    </td>
-                    <td class="text-center">
-                        <a href="{% url 'edit' task.id %}" class="btn btn-warning btn-sm me-1">
-                            ✏ Edit
-                        </a>
-                        <a href="{% url 'delete' task.id %}" class="btn btn-danger btn-sm">
-                            🗑 Delete
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="3" class="text-center text-muted">No tasks found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    
-        {% if page_obj.has_other_pages %}
-        <nav>
-            <ul class="pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1">&laquo; First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo; First</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
-                    </li>
-                {% endif %}
-    
-                {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
-                        </li>
-                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-    
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">Next</span>
-                    </li>
-                    <li class="page-item disabled">
-                        <span class="page-link">Last &raquo;</span>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-        {% endif %}
+{% block title %}Task List{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg p-4 rounded">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">📋 Task List</h2>
+        <a href="{% url 'create' %}" class="btn btn-success shadow-sm">
+            ➕ Add Task
+        </a>
     </div>
-    {% endblock %} 
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr class="task-row">
+                <td class="fw-semibold {% if task.completed %}text-muted text-decoration-line-through{% endif %}">
+                    {{ task.title }}
+                </td>
+                <td class="text-center">
+                    <form action="{% url 'toggle' task.id %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <span class="badge {% if task.completed %}bg-success{% else %}bg-warning text-dark{% endif %} p-2">
+                            {% if task.completed %}✔ Completed{% else %}⏳ Pending{% endif %}
+                        </span>
+                        <button type="submit" class="btn btn-sm btn-light border-0 ms-2">
+                            🔄
+                        </button>
+                    </form>
+                </td>
+                <td class="text-center">
+                    <a href="{% url 'edit' task.id %}" class="btn btn-outline-warning btn-sm me-1">
+                        ✏ Edit
+                    </a>
+                    <a href="{% url 'delete' task.id %}" class="btn btn-outline-danger btn-sm">
+                        🗑 Delete
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center text-muted">No tasks found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if page_obj.has_other_pages %}
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link shadow-sm" href="?page=1">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link shadow-sm" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo; First</span></li>
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link shadow-sm">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link shadow-sm" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link shadow-sm" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link shadow-sm" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+                <li class="page-item disabled"><span class="page-link">Last &raquo;</span></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<style>
+    .task-row:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        transition: background-color 0.3s ease-in-out;
+    }
+</style>
+
+{% endblock %}
+
 </body>
 </html>
