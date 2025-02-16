@@ -12,12 +12,12 @@
     
     {% block content %}
     <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="col-md-5">
-            <div class="card shadow-lg p-4">
+        <div class="col-md-5 col-sm-8 col-10">
+            <div class="card shadow-lg border-0 rounded-4 p-4">
                 <div class="card-body">
-                    <h2 class="text-center mb-4 fw-bold">📝 Register</h2>
+                    <h2 class="text-center mb-4 fw-bold text-success">📝 Register</h2>
     
-                    <form method="post">
+                    <form method="post" id="registerForm" novalidate>
                         {% csrf_token %}
     
                         {% for field in form %}
@@ -25,32 +25,150 @@
                             <label class="form-label fw-bold">{{ field.label }}</label>
                             <div class="input-group">
                                 {% if field.name == "username" %}
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                    {{ field }}
                                 {% elif field.name == "email" %}
-                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                    {{ field }}
                                 {% elif "password" in field.name %}
-                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                    <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                    {{ field }}
+                                    <button type="button" class="btn btn-outline-secondary toggle-password">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                {% else %}
+                                    {{ field }}
                                 {% endif %}
-                                {{ field }}
                             </div>
-                            {% if field.errors %}
-                                <div class="text-danger small">{{ field.errors }}</div>
-                            {% endif %}
+                            <div class="invalid-feedback"></div>  <!-- Error message container -->
                         </div>
                         {% endfor %}
     
-                        <button type="submit" class="btn btn-success w-100">✅ Register</button>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Password Strength</label>
+                            <div class="progress">
+                                <div id="passwordStrength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+    
+                        <button type="submit" class="btn btn-success w-100 shadow-sm">
+                            ✅ Register
+                        </button>
                     </form>
     
                     <p class="text-center mt-3">
                         Already have an account? 
-                        <a href="{% url 'login' %}" class="fw-bold text-decoration-none">Login</a>
+                        <a href="{% url 'login' %}" class="fw-bold text-decoration-none text-success">Login</a>
                     </p>
                 </div>
             </div>
         </div>
     </div>
+    
+    <style>
+        input:focus {
+            border-color: #28a745 !important;
+            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5) !important;
+        }
+    
+        button:hover {
+            transform: scale(1.02);
+            transition: 0.3s ease-in-out;
+        }
+    
+        .progress-bar.weak {
+            background-color: red !important;
+        }
+    
+        .progress-bar.medium {
+            background-color: orange !important;
+        }
+    
+        .progress-bar.strong {
+            background-color: green !important;
+        }
+    </style>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("registerForm");
+            const passwordField = document.getElementById("id_password1");
+            const passwordStrength = document.getElementById("passwordStrength");
+    
+            // Password strength checker
+            passwordField.addEventListener("input", function () {
+                const password = passwordField.value;
+                let strength = 0;
+    
+                if (password.length >= 6) strength += 1;
+                if (password.match(/[A-Z]/)) strength += 1;
+                if (password.match(/[0-9]/)) strength += 1;
+                if (password.match(/[@$!%*?&]/)) strength += 1;
+    
+                let strengthClass = "";
+                let width = "0%";
+    
+                if (strength === 1) {
+                    strengthClass = "weak";
+                    width = "25%";
+                } else if (strength === 2) {
+                    strengthClass = "medium";
+                    width = "50%";
+                } else if (strength >= 3) {
+                    strengthClass = "strong";
+                    width = "100%";
+                }
+    
+                passwordStrength.className = `progress-bar ${strengthClass}`;
+                passwordStrength.style.width = width;
+            });
+    
+            // Password visibility toggle
+            document.querySelectorAll(".toggle-password").forEach(button => {
+                button.addEventListener("click", function () {
+                    let input = this.previousElementSibling;
+                    if (input.type === "password") {
+                        input.type = "text";
+                        this.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                    } else {
+                        input.type = "password";
+                        this.innerHTML = '<i class="bi bi-eye"></i>';
+                    }
+                });
+            });
+    
+            // Form validation
+            form.addEventListener("submit", function (event) {
+                let isValid = true;
+                const fields = form.querySelectorAll("input");
+    
+                fields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add("is-invalid");
+                        field.nextElementSibling.textContent = `${field.name.replace("_", " ")} is required.`;
+                    } else {
+                        field.classList.remove("is-invalid");
+                        field.nextElementSibling.textContent = "";
+                    }
+                });
+    
+                if (!isValid) event.preventDefault();
+            });
+    
+            // Remove error on input
+            form.querySelectorAll("input").forEach(input => {
+                input.addEventListener("input", function () {
+                    if (this.value.trim()) {
+                        this.classList.remove("is-invalid");
+                        this.nextElementSibling.textContent = "";
+                    }
+                });
+            });
+        });
+    </script>
     {% endblock %}
+    
     
 </body>
 </html>
