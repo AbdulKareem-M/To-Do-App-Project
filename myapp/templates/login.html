@@ -8,47 +8,62 @@
 <body>
     {% extends "base.html" %}
 
-    {% block title %}Login{% endblock %}
-    
-    {% block content %}
-    <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="col-md-4">
-            <div class="card shadow-lg p-4">
-                <div class="card-body">
-                    <h2 class="text-center mb-4 fw-bold">🔐 Login</h2>
-    
-                    <form method="post">
-                        {% csrf_token %}
-    
-                        {% for field in form %}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">{{ field.label }}</label>
-                            <div class="input-group">
-                                {% if field.name == "username" %}
-                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                {% elif field.name == "password" %}
-                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                {% endif %}
-                                {{ field }}
-                            </div>
-                            {% if field.errors %}
-                                <div class="text-danger small">{{ field.errors }}</div>
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="col-md-4 col-sm-8 col-10">
+        <div class="card shadow-lg border-0 rounded-4 p-4">
+            <div class="card-body">
+                <h2 class="text-center mb-4 fw-bold text-primary">🔐 Login</h2>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{{ field.label }}</label>
+                        <div class="input-group">
+                            {% if field.name == "username" %}
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                            {% elif field.name == "password" %}
+                                <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
                             {% endif %}
+                            {{ field }}
                         </div>
-                        {% endfor %}
-    
-                        <button type="submit" class="btn btn-primary w-100">🔑 Login</button>
-                    </form>
-    
-                    <p class="text-center mt-3">
-                        Don't have an account? 
-                        <a href="{% url 'register' %}" class="fw-bold text-decoration-none">Register</a>
-                    </p>
-                </div>
+                        {% if field.errors %}
+                            <div class="text-danger small">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                        🔑 Login
+                    </button>
+                </form>
+
+                <p class="text-center mt-3">
+                    Don't have an account? 
+                    <a href="{% url 'register' %}" class="fw-bold text-decoration-none text-primary">Register</a>
+                </p>
             </div>
         </div>
     </div>
-    {% endblock %}
+</div>
+
+<style>
+    input:focus {
+        border-color: #007bff !important;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+    }
+
+    button:hover {
+        transform: scale(1.02);
+        transition: 0.3s ease-in-out;
+    }
+</style>
+{% endblock %}
+
     
 </body>
 </html>
