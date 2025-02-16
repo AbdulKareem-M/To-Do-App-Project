@@ -90,4 +90,8 @@ class TaskToggleView(LoginRequiredMixin, View):
     task.completed = not task.completed
     task.save()
     return redirect('index')
+
+
+hello
+
   
