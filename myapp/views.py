@@ -92,6 +92,4 @@ class TaskToggleView(LoginRequiredMixin, View):
     return redirect('index')
 
 
-hello
-
   
