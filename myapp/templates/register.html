@@ -3,29 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Register</title>
 </head>
 <body>
-  {% extends "base.html" %}
+    {% extends "base.html" %}
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card mt-5">
-            <div class="card-body">
-                <h2 class="text-center">Register</h2>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
-                <p class="text-center mt-3">
-                    Already have an account? <a href="{% url 'login' %}">Login</a>
-                </p>
+    {% block title %}Register{% endblock %}
+    
+    {% block content %}
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="col-md-5">
+            <div class="card shadow-lg p-4">
+                <div class="card-body">
+                    <h2 class="text-center mb-4 fw-bold">📝 Register</h2>
+    
+                    <form method="post">
+                        {% csrf_token %}
+    
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ field.label }}</label>
+                            <div class="input-group">
+                                {% if field.name == "username" %}
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                {% elif field.name == "email" %}
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                {% elif "password" in field.name %}
+                                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                {% endif %}
+                                {{ field }}
+                            </div>
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+    
+                        <button type="submit" class="btn btn-success w-100">✅ Register</button>
+                    </form>
+    
+                    <p class="text-center mt-3">
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="fw-bold text-decoration-none">Login</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+    {% endblock %}
+    
 </body>
 </html>
