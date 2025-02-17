@@ -19,6 +19,7 @@ from django.urls import path
 from myapp.views import TaskListView, TaskCreateView, TaskUpdateView, TaskDeleteView,TaskToggleView, RegistrationView, CustomLoginView,CustomLogoutView
 
 urlpatterns = [
+    path('', TaskListView.as_view(), name='home'),
     path('register/', RegistrationView.as_view(), name='register'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),

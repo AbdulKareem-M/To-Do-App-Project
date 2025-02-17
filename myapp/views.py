@@ -41,6 +41,7 @@ class TaskListView(LoginRequiredMixin, ListView):
   model = TaskModel
   template_name = 'index.html'
   context_object_name = 'tasks'
+  login_url = 'login' # redirects unauthenticated users
   paginate_by = 5
   ordering = ['-id']
   
