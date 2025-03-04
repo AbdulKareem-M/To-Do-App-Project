@@ -1,0 +1,19 @@
+# 🛑 Ignore Django Migrations (only ignore the cache, not actual migrations)
+*/migrations/_pycache_/
+
+# 🛑 Ignore Environment Variables
+.env
+*.env
+
+# 🛑 Ignore Logs & Temporary Files
+*.log
+*.swp
+*.swo
+
+# 🛑 Ignore Static and Media Files (Optional: Only if you're using cloud storage like AWS S3)
+staticfiles/
+media/
+
+# 🛑 Ignore IDE-specific files (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
