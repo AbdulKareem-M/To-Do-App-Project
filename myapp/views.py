@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth import login,logout
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
@@ -7,17 +7,23 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import TaskModel
 from .forms import Userform
+from django.contrib import messages
 
 # User Registration View
-class RegistrationView(FormView):
-    template_name = 'register.html'
-    form_class = Userform
-    success_url = reverse_lazy('index')
+class RegistrationView(View):
+    def get(self, request):
+        form = Userform()
+        return render(request, "register.html", {"form": form})
 
-    def form_valid(self, form):
-        user = form.save()  # Save user
-        login(self.request, user)  # Auto-login after registration
-        return super().form_valid(form)
+    def post(self, request):
+        form = Userform(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log in the user automatically
+            return redirect("index")  # Redirect to the home page
+        else:
+            messages.error(request, "❌ Registration failed. Please correct the errors below.")
+        return render(request, "register.html", {"form": form})
 
 
 # User Login View
